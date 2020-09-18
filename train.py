@@ -13,24 +13,25 @@ from configs import (
     get_resnet_teacher_default_config,
     get_resnet_teacher_test_config
 )
-from models import ResNet
+from models import BaseCifarModel
 
 SEED = 7
+DATA_FOLDER = "data"
 
 
 def train(experiment: str, num_workers: int = 0, is_test: bool = False,
           resume_from_checkpoint: str = None):
     seed_everything(SEED)
 
-    if experiment == "train teacher":
+    if experiment == "teacher":
         config_function = get_resnet_teacher_test_config if is_test else get_resnet_teacher_default_config
-    elif experiment == "train student":
+    elif experiment == "student":
         config_function = get_resnet_student_test_config if is_test else get_resnet_student_default_config
     else:
         raise ValueError("Unknown experiment name")
-    config = config_function()
+    config = config_function(DATA_FOLDER)
     num_layers = config.num_layers
-    model = ResNet(config, num_workers)
+    model = BaseCifarModel(config, num_workers)
 
     # define logger
     wandb_logger = WandbLogger(project=f"resnet-{num_layers}", log_model=True, offline=is_test)

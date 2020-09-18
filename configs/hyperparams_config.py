@@ -3,9 +3,10 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class ModelHyperparameters:
+    data_path: str
+
     n_epochs: int
     batch_size: int
-    test_batch_size: int
     learning_rate: float
     weight_decay: float
     decay_gamma: float

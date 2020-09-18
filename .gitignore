@@ -134,4 +134,5 @@ dmypy.json
 .ipynb_checkpoints/
 .mypy_cache
 .cache
-
+wandb/
+data/

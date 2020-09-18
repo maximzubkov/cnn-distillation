@@ -4,6 +4,6 @@ from .hyperparams_config import ModelHyperparameters
 
 
 @dataclass(frozen=True)
-class ResNetConfig:
+class ModelConfig:
     num_layers: int
     hyperparams_config: ModelHyperparameters
