@@ -4,7 +4,7 @@ from os.path import join
 import torch
 import wandb
 from pytorch_lightning import Trainer, seed_everything
-from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping, LearningRateLogger
+from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateLogger
 from pytorch_lightning.loggers import WandbLogger
 
 from configs import (
@@ -13,7 +13,6 @@ from configs import (
     get_resnet_teacher_default_config,
     get_resnet_teacher_test_config
 )
-
 from models import ResNet
 
 SEED = 7

@@ -1,5 +1,5 @@
-from .resnet_config import ResNetConfig
 from .hyperparams_config import ModelHyperparameters
+from .resnet_config import ResNetConfig
 
 
 def _get_default_hyperparams() -> ModelHyperparameters:
@@ -46,9 +46,9 @@ def get_resnet_student_default_config() -> ResNetConfig:
         hyperparams_config=_get_default_hyperparams()
     )
 
+
 def get_resnet_student_test_config() -> ResNetConfig:
     return ResNetConfig(
         num_layers=5,
         hyperparams_config=_get_test_hyperparams()
     )
-
