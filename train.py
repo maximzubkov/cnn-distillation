@@ -29,7 +29,7 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
     if experiment == "distillation":
         config_function = get_distillation_config
         config = config_function()
-        project_name = f"distillation"
+        project_name = "distillation"
         model = DistillationCifarModel(config, hyperparams_config, num_workers)
     elif experiment == "teacher":
         config_function = get_resnet_teacher_config
@@ -48,7 +48,6 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
     wandb_logger = WandbLogger(project=project_name, log_model=True, offline=is_test)
     wandb_logger.watch(model)
     # define model checkpoint callback
-    print(wandb.run.dir)
     model_checkpoint_callback = ModelCheckpoint(
         filepath=join(wandb.run.dir, "{epoch:02d}-{val_loss:.4f}"),
         period=hyperparams_config.save_every_epoch,

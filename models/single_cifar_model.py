@@ -14,6 +14,7 @@ class SingleCifarModel(BaseCifarModel):
         super().__init__(hyperparams_config, num_workers)
         self.criterion = torch.nn.CrossEntropyLoss()
         self.model = get_model(model_config)
+        self.save_hyperparameters()
 
     def forward(self, images: torch.Tensor):
         return self.model(images)

@@ -15,6 +15,7 @@ class DistillationCifarModel(BaseCifarModel):
         self.criterion = torch.nn.MSELoss()
         self.student = get_model(model_config.student_config)
         self.teacher = get_model(model_config.teacher_config)
+        self.save_hyperparameters()
 
     def forward(self, images: torch.Tensor):
         return self.model(images)
