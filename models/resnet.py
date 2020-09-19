@@ -8,22 +8,28 @@ from configs import ModelConfig
 
 
 class ResNet50(nn.Module):
-    def __init__(self, config: ModelConfig):
+    def __init__(self, config: ModelConfig, out_classes: int):
         super().__init__()
         self.encoder = models.resnet50(pretrained=config.pretrained)
+        self.encoder.fc = nn.Sequential(
+            nn.Linear(self.encoder.fc.in_features, 1000),
+            nn.Dropout(),
+            nn.BatchNorm1d(1000),
+            nn.ReLU(),
+        )
         if config.freeze_encoder:
             for name, child in self.encoder.named_children():
-                if name != 'fc':
+                if name not in ['layer4', 'fc']:
                     for param in child.parameters():
                         param.requires_grad = False
 
-        self.classifier = nn.Linear(1000, 10)
+        self.classifier = nn.Linear(1000, out_classes)
+
         if config.is_teacher:
-            childern = chain(self.classifier.named_children(), self.encoder.named_children())
-            for name, child in childern:
-                if name != 'fc':
-                    for param in child.parameters():
-                        param.requires_grad = False
+            children = chain(self.classifier.named_children(), self.encoder.named_children())
+            for name, child in children:
+                for param in child.parameters():
+                    param.requires_grad = False
 
     def forward(self, image: torch.Tensor) -> torch.Tensor:
         return self.classifier(self.encoder(image))
@@ -33,18 +39,27 @@ class ResNet50(nn.Module):
 
 
 class ResNet18(nn.Module):
-    def __init__(self, config: ModelConfig):
+    def __init__(self, config: ModelConfig, out_classes: int):
         super().__init__()
         self.encoder = models.resnet18(pretrained=config.pretrained)
+        self.encoder.fc = nn.Sequential(
+            nn.Linear(self.encoder.fc.in_features, 1000),
+            nn.Dropout(),
+            nn.BatchNorm1d(1000),
+            nn.ReLU(),
+        )
+
         if config.freeze_encoder:
             for name, child in self.encoder.named_children():
-                for param in child.parameters():
-                    param.requires_grad = False
+                if name not in ['layer4', 'fc']:
+                    for param in child.parameters():
+                        param.requires_grad = False
 
-        self.classifier = nn.Linear(1000, 10)
+        self.classifier = nn.Linear(1000, out_classes)
+
         if config.is_teacher:
-            childern = chain(self.classifier.named_children(), self.encoder.named_children())
-            for name, child in childern:
+            children = chain(self.classifier.named_children(), self.encoder.named_children())
+            for name, child in children:
                 for param in child.parameters():
                     param.requires_grad = False
 

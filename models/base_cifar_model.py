@@ -14,12 +14,12 @@ from configs import ModelConfig, ModelHyperparameters
 from .resnet import ResNet18, ResNet50
 
 
-def get_model(model_config: ModelConfig) -> torch.nn:
+def get_model(model_config: ModelConfig, num_classes: int) -> torch.nn:
     if model_config.model_name == "resnet":
         if model_config.num_layers == 50:
-            return ResNet50(model_config)
+            return ResNet50(model_config, num_classes)
         elif model_config.num_layers == 18:
-            return ResNet18(model_config)
+            return ResNet18(model_config, num_classes)
         else:
             raise ValueError("Unknown resnet")
     else:

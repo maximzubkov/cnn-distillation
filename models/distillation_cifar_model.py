@@ -13,8 +13,8 @@ class DistillationCifarModel(BaseCifarModel):
                  hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__(hyperparams_config, num_workers)
         self.criterion = torch.nn.MSELoss()
-        self.student = get_model(model_config.student_config)
-        self.teacher = get_model(model_config.teacher_config)
+        self.student = get_model(model_config.student_config, self.num_classes)
+        self.teacher = get_model(model_config.teacher_config, self.num_classes)
         self.save_hyperparameters()
 
     def forward(self, images: torch.Tensor):
