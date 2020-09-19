@@ -17,5 +17,5 @@ class ModelHyperparameters:
     val_every_epoch: int = 1
     log_every_epoch: int = 10
 
-    optimizer: str = "Momentum"
+    optimizer: str = "Adam"
     nesterov: bool = True

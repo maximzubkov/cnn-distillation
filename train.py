@@ -8,12 +8,13 @@ from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateLogger
 from pytorch_lightning.loggers import WandbLogger
 
 from configs import (
-    get_resnet_student_default_config,
-    get_resnet_student_test_config,
-    get_resnet_teacher_default_config,
-    get_resnet_teacher_test_config
+    get_resnet_student_config,
+    get_resnet_teacher_config,
+    get_test_hyperparams,
+    get_default_hyperparams,
+    get_distillation_config,
 )
-from models import BaseCifarModel
+from models import SingleCifarModel, DistillationCifarModel
 
 SEED = 7
 DATA_FOLDER = "data"
@@ -23,23 +24,34 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
           resume_from_checkpoint: str = None):
     seed_everything(SEED)
 
-    if experiment == "teacher":
-        config_function = get_resnet_teacher_test_config if is_test else get_resnet_teacher_default_config
+    hyperparams_config_function = get_test_hyperparams if is_test else get_default_hyperparams
+    hyperparams_config = hyperparams_config_function(DATA_FOLDER)
+    if experiment == "distillation":
+        config_function = get_distillation_config
+        config = config_function()
+        project_name = f"distillation"
+        model = DistillationCifarModel(config, hyperparams_config, num_workers)
+    elif experiment == "teacher":
+        config_function = get_resnet_teacher_config
+        config = config_function()
+        project_name = f"resnet-{config.num_layers}"
+        model = SingleCifarModel(config, hyperparams_config, num_workers)
     elif experiment == "student":
-        config_function = get_resnet_student_test_config if is_test else get_resnet_student_default_config
+        config_function = get_resnet_student_config
+        config = config_function()
+        project_name = f"resnet-{config.num_layers}"
+        model = SingleCifarModel(config, hyperparams_config, num_workers)
     else:
         raise ValueError("Unknown experiment name")
-    config = config_function(DATA_FOLDER)
-    num_layers = config.num_layers
-    model = BaseCifarModel(config, num_workers)
 
     # define logger
-    wandb_logger = WandbLogger(project=f"resnet-{num_layers}", log_model=True, offline=is_test)
+    wandb_logger = WandbLogger(project=project_name, log_model=True, offline=is_test)
     wandb_logger.watch(model)
     # define model checkpoint callback
+    print(wandb.run.dir)
     model_checkpoint_callback = ModelCheckpoint(
         filepath=join(wandb.run.dir, "{epoch:02d}-{val_loss:.4f}"),
-        period=config.hyperparams_config.save_every_epoch,
+        period=hyperparams_config.save_every_epoch,
         save_top_k=3,
     )
 
@@ -48,10 +60,10 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
     # define learning rate logger
     lr_logger = LearningRateLogger()
     trainer = Trainer(
-        max_epochs=config.hyperparams_config.n_epochs,
+        max_epochs=hyperparams_config.n_epochs,
         deterministic=True,
-        check_val_every_n_epoch=config.hyperparams_config.val_every_epoch,
-        row_log_interval=config.hyperparams_config.log_every_epoch,
+        check_val_every_n_epoch=hyperparams_config.val_every_epoch,
+        row_log_interval=hyperparams_config.log_every_epoch,
         logger=wandb_logger,
         checkpoint_callback=model_checkpoint_callback,
         resume_from_checkpoint=resume_from_checkpoint,
@@ -67,7 +79,7 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser()
-    arg_parser.add_argument("experiment", type=str, choices=["teacher", "student"])
+    arg_parser.add_argument("experiment", type=str, choices=["teacher", "student", "distillation"])
     arg_parser.add_argument("--n_workers", type=int, default=0)
     arg_parser.add_argument("--test", action="store_true")
     arg_parser.add_argument("--resume", type=str, default=None)

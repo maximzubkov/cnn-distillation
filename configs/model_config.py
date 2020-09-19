@@ -1,9 +1,10 @@
 from dataclasses import dataclass
 
-from .hyperparams_config import ModelHyperparameters
-
 
 @dataclass(frozen=True)
 class ModelConfig:
+    model_name: str
     num_layers: int
-    hyperparams_config: ModelHyperparameters
+    pretrained: bool
+    is_teacher: bool
+    freeze_encoder: bool
