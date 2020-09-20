@@ -23,9 +23,10 @@ class DistillationCifarModel(BaseCifarModel):
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         images, labels = batch
         student_encoding = self.student.encode(images)
-        teacher_encoding = self.teacher.encode(images)
         student_logits = self.student.classifier(student_encoding)
-        teacher_logits = self.teacher.classifier(teacher_encoding)
+        with torch.no_grad():
+            teacher_encoding = self.teacher.encode(images)
+            teacher_logits = self.teacher.classifier(teacher_encoding)
         loss = self.criterion(teacher_encoding, student_encoding) + self.criterion(student_logits, teacher_logits)
         with torch.no_grad():
             log = {'train/loss': loss}
