@@ -7,6 +7,19 @@ import torchvision.models as models
 from configs import ModelConfig
 
 
+def _finetuning_setup(encoder: nn.Module) -> None:
+    for name, child in encoder.named_children():
+        if name not in ['fc']:
+            for param in child.parameters():
+                param.requires_grad = False
+    # Unfreeze bn params
+    for module in encoder.modules():
+        if isinstance(module, nn.BatchNorm2d):
+            if hasattr(module, 'weight'):
+                module.weight.requires_grad = True
+            if hasattr(module, 'bias'):
+                module.bias.requires_grad = True
+
 class ResNet50(nn.Module):
     def __init__(self, config: ModelConfig, out_classes: int):
         super().__init__()
@@ -17,11 +30,9 @@ class ResNet50(nn.Module):
             nn.BatchNorm1d(1000),
             nn.ReLU(),
         )
+
         if config.freeze_encoder:
-            for name, child in self.encoder.named_children():
-                if name not in ['layer4', 'fc']:
-                    for param in child.parameters():
-                        param.requires_grad = False
+            _finetuning_setup(encoder=self.encoder)
 
         self.classifier = nn.Linear(1000, out_classes)
 
@@ -50,10 +61,7 @@ class ResNet18(nn.Module):
         )
 
         if config.freeze_encoder:
-            for name, child in self.encoder.named_children():
-                if name not in ['layer4', 'fc']:
-                    for param in child.parameters():
-                        param.requires_grad = False
+            _finetuning_setup(encoder=self.encoder)
 
         self.classifier = nn.Linear(1000, out_classes)
 
