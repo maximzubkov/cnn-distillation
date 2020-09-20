@@ -2,6 +2,7 @@ from typing import Tuple, Dict, List
 
 import torch
 import torch.nn.functional as F
+from collections import OrderedDict
 import torchvision.transforms as transforms
 from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning.metrics.functional import confusion_matrix
@@ -35,36 +36,12 @@ class BaseCifarModel(LightningModule):
             raise ValueError("Unknown model")
         if model_config.is_teacher:
             checkpoints = torch.load(model_config.checkpoint_path, map_location=self.device)
-            model.state_dict(checkpoints["state_dict"])
+            parsed_state_dict = OrderedDict()
+            for k, v in checkpoints["state_dict"].items():
+                name = k[6:]  # remove `module.`
+                parsed_state_dict[name] = v
+            model.load_state_dict(parsed_state_dict)
         return model
-
-    def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
-        images, labels = batch
-        logits = self(images)
-        loss = self.criterion(logits, labels)
-        log = {'train/loss': loss}
-        with torch.no_grad():
-            conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))
-            log["train/accuracy"] = conf_matrix.trace() / conf_matrix.sum()
-        progress_bar = {"train/accuracy": log["train/accuracy"]}
-
-        return {"loss": loss, "log": log, "progress_bar": progress_bar, "confusion_matrix": conf_matrix}
-
-    def validation_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
-        # [batch size; num_classes]
-        images, labels = batch
-        logits = self(images)
-        loss = F.cross_entropy(logits, labels.squeeze(0))
-        with torch.no_grad():
-            conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))
-
-        return {"val_loss": loss, "confusion_matrix": conf_matrix}
-
-    def test_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
-        result = self.validation_step(batch, batch_idx)
-        result["test_loss"] = result["val_loss"]
-        del result["val_loss"]
-        return result
 
     # ===== OPTIMIZERS =====
 

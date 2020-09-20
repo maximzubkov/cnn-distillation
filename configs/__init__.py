@@ -21,7 +21,7 @@ def get_test_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=10,
-        batch_size=5,
+        batch_size=128,
         learning_rate=0.0003,
         weight_decay=0.0001,
         decay_gamma=0.95,
