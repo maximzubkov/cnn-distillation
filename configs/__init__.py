@@ -7,9 +7,9 @@ def get_default_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=100,
-        batch_size=512,
-        learning_rate=0.1,
-        weight_decay=0,
+        batch_size=32,
+        learning_rate=0.0003,
+        weight_decay=0.0001,
         decay_gamma=0.95,
         shuffle_data=True,
     )
@@ -19,9 +19,9 @@ def get_test_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=50,
-        batch_size=512,
-        learning_rate=0.1,
-        weight_decay=0,
+        batch_size=32,
+        learning_rate=0.0003,
+        weight_decay=0.0001,
         decay_gamma=0.95,
         shuffle_data=True,
     )
