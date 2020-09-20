@@ -33,7 +33,7 @@ def get_resnet_teacher_config() -> ModelConfig:
         num_layers=50,
         pretrained=True,
         is_teacher=False,
-        freeze_encoder=True
+        freeze_encoder=False
     )
 
 

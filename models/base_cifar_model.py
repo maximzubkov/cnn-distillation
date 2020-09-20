@@ -32,8 +32,8 @@ class BaseCifarModel(LightningModule):
         self.hyperparams = hyperparams_config
         self.num_workers = num_workers
         self.num_classes = 10
-        self.mean = [0.4914, 0.4822, 0.4465]
-        self.std = [0.2023, 0.1994, 0.2010]
+        self.mean = [0.485, 0.456, 0.406]
+        self.std = [0.229, 0.224, 0.225]
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         images, labels = batch
