@@ -1,11 +1,9 @@
+from collections import OrderedDict
 from typing import Tuple, Dict, List
 
 import torch
-import torch.nn.functional as F
-from collections import OrderedDict
 import torchvision.transforms as transforms
 from pytorch_lightning.core.lightning import LightningModule
-from pytorch_lightning.metrics.functional import confusion_matrix
 from torch.optim import Adam, Optimizer, SGD
 from torch.optim.lr_scheduler import ExponentialLR, _LRScheduler
 from torch.utils.data import DataLoader
