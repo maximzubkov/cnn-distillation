@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from pytorch_lightning.metrics.functional import confusion_matrix
 
 from configs import ModelConfig, ModelHyperparameters
-from .base_cifar_model import BaseCifarModel, get_model
+from .base_cifar_model import BaseCifarModel
 
 
 class SingleCifarModel(BaseCifarModel):
@@ -13,7 +13,7 @@ class SingleCifarModel(BaseCifarModel):
                  hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__(hyperparams_config, num_workers)
         self.criterion = torch.nn.CrossEntropyLoss()
-        self.model = get_model(model_config, self.num_classes)
+        self.model = self.get_model(model_config)
         self.save_hyperparameters()
 
     def forward(self, images: torch.Tensor):

@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from pytorch_lightning.metrics.functional import confusion_matrix
 
 from configs import DistillationConfig, ModelHyperparameters
-from .base_cifar_model import BaseCifarModel, get_model
+from .base_cifar_model import BaseCifarModel
 
 
 class DistillationCifarModel(BaseCifarModel):
@@ -13,8 +13,8 @@ class DistillationCifarModel(BaseCifarModel):
                  hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__(hyperparams_config, num_workers)
         self.criterion = torch.nn.MSELoss()
-        self.student = get_model(model_config.student_config, self.num_classes)
-        self.teacher = get_model(model_config.teacher_config, self.num_classes)
+        self.student = self.get_model(model_config.student_config)
+        self.teacher = self.get_model(model_config.teacher_config)
         self.save_hyperparameters()
 
     def forward(self, images: torch.Tensor):
@@ -37,8 +37,8 @@ class DistillationCifarModel(BaseCifarModel):
     def validation_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         # [batch size; num_classes]
         images, labels = batch
-        student_encoding = self.student(images)
-        teacher_encoding = self.teacher(images)
+        student_encoding = self.student.encode(images)
+        teacher_encoding = self.teacher.encode(images)
         loss = F.mse_loss(student_encoding, teacher_encoding)
         logits = self.student.classifier(student_encoding)
         conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))

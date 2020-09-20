@@ -1,3 +1,5 @@
+from os.path import join
+
 from .distillation_config import DistillationConfig
 from .hyperparams_config import ModelHyperparameters
 from .model_config import ModelConfig
@@ -53,7 +55,8 @@ def get_distillation_config() -> DistillationConfig:
                                    num_layers=50,
                                    pretrained=True,
                                    is_teacher=True,
-                                   freeze_encoder=True),
+                                   freeze_encoder=True,
+                                   checkpoint_path=join("model", "checkpoints", "teacher.ckpt")),
         student_config=ModelConfig(model_name="resnet",
                                    num_layers=18,
                                    pretrained=False,

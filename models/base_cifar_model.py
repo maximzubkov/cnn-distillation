@@ -14,18 +14,6 @@ from configs import ModelConfig, ModelHyperparameters
 from .resnet import ResNet18, ResNet50
 
 
-def get_model(model_config: ModelConfig, num_classes: int) -> torch.nn:
-    if model_config.model_name == "resnet":
-        if model_config.num_layers == 50:
-            return ResNet50(model_config, num_classes)
-        elif model_config.num_layers == 18:
-            return ResNet18(model_config, num_classes)
-        else:
-            raise ValueError("Unknown resnet")
-    else:
-        raise ValueError("Unknown model")
-
-
 class BaseCifarModel(LightningModule):
     def __init__(self, hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__()
@@ -34,6 +22,21 @@ class BaseCifarModel(LightningModule):
         self.num_classes = 10
         self.mean = [0.485, 0.456, 0.406]
         self.std = [0.229, 0.224, 0.225]
+
+    def get_model(self, model_config: ModelConfig) -> torch.nn:
+        if model_config.model_name == "resnet":
+            if model_config.num_layers == 50:
+                model = ResNet50(model_config, self.num_classes)
+            elif model_config.num_layers == 18:
+                model = ResNet18(model_config, self.num_classes)
+            else:
+                raise ValueError("Unknown resnet")
+        else:
+            raise ValueError("Unknown model")
+        if model_config.is_teacher:
+            checkpoints = torch.load(model_config.checkpoint_path)
+            model.state_dict(checkpoints["state_dict"])
+        return model
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         images, labels = batch

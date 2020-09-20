@@ -8,3 +8,4 @@ class ModelConfig:
     pretrained: bool
     is_teacher: bool
     freeze_encoder: bool
+    checkpoint_path: str = None
