@@ -56,7 +56,7 @@ def get_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=True,
                                    freeze_encoder=True,
-                                   checkpoint_path=join("model", "checkpoints", "teacher.ckpt")),
+                                   checkpoint_path=join("models", "checkpoints", "teacher.ckpt")),
         student_config=ModelConfig(model_name="resnet",
                                    num_layers=18,
                                    pretrained=False,
