@@ -10,26 +10,33 @@ from torch.optim.lr_scheduler import ExponentialLR, _LRScheduler
 from torch.utils.data import DataLoader
 from torchvision.datasets import CIFAR10
 
-from configs import ModelConfig
-from .resnet import ResNet
-
-
-def get_model(model_config: ModelConfig) -> torch.nn:
-    return ResNet(model_config)
+from configs import ModelConfig, ModelHyperparameters
+from .resnet import ResNet18, ResNet50
 
 
 class BaseCifarModel(LightningModule):
-    def __init__(self, model_config: ModelConfig, num_workers: int = 0):
+    def __init__(self, hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__()
-        self.hyperparams = model_config.hyperparams_config
+        self.hyperparams = hyperparams_config
         self.num_workers = num_workers
-        self.criterion = torch.nn.CrossEntropyLoss()
-        self.mean = [0.4914, 0.4822, 0.4465]
-        self.std = [0.2023, 0.1994, 0.2010]
-        self.model = get_model(model_config)
+        self.num_classes = 10
+        self.mean = [0.485, 0.456, 0.406]
+        self.std = [0.229, 0.224, 0.225]
 
-    def forward(self, images: torch.Tensor):
-        return self.model(images)
+    def get_model(self, model_config: ModelConfig) -> torch.nn:
+        if model_config.model_name == "resnet":
+            if model_config.num_layers == 50:
+                model = ResNet50(model_config, self.num_classes)
+            elif model_config.num_layers == 18:
+                model = ResNet18(model_config, self.num_classes)
+            else:
+                raise ValueError("Unknown resnet")
+        else:
+            raise ValueError("Unknown model")
+        if model_config.is_teacher:
+            checkpoints = torch.load(model_config.checkpoint_path, map_location=self.device)
+            print(checkpoints)
+        return model
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         images, labels = batch
@@ -86,6 +93,7 @@ class BaseCifarModel(LightningModule):
 
     def train_dataloader(self):
         transform_train = transforms.Compose([transforms.RandomCrop(32, padding=4),
+                                              transforms.Resize((128, 128)),
                                               transforms.RandomHorizontalFlip(),
                                               transforms.ToTensor(),
                                               transforms.Normalize(self.mean, self.std)])
@@ -101,7 +109,8 @@ class BaseCifarModel(LightningModule):
                           pin_memory=True)
 
     def val_dataloader(self):
-        transform_val = transforms.Compose([transforms.ToTensor(),
+        transform_val = transforms.Compose([transforms.Resize((128, 128)),
+                                            transforms.ToTensor(),
                                             transforms.Normalize(self.mean, self.std)])
         dataset = CIFAR10(root=self.hyperparams.data_path,
                           train=False,
@@ -121,7 +130,7 @@ class BaseCifarModel(LightningModule):
         with torch.no_grad():
             logs = {f"{group}/loss": torch.stack([out[loss_key] for out in outputs]).mean()}
             accumulated_conf_matrix = torch.zeros(
-                10, 10, requires_grad=False, device=self.device
+                self.num_classes, self.num_classes, requires_grad=False, device=self.device
             )
             for out in outputs:
                 _conf_matrix = out["confusion_matrix"]
