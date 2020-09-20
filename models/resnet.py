@@ -20,6 +20,7 @@ def _finetuning_setup(encoder: nn.Module) -> None:
             if hasattr(module, 'bias'):
                 module.bias.requires_grad = True
 
+
 class ResNet50(nn.Module):
     def __init__(self, config: ModelConfig, out_classes: int):
         super().__init__()
