@@ -35,7 +35,7 @@ class BaseCifarModel(LightningModule):
             raise ValueError("Unknown model")
         if model_config.is_teacher:
             checkpoints = torch.load(model_config.checkpoint_path, map_location=self.device)
-            print(checkpoints)
+            model.state_dict(checkpoints["state_dict"])
         return model
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
