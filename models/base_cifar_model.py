@@ -90,6 +90,7 @@ class BaseCifarModel(LightningModule):
 
     def train_dataloader(self):
         transform_train = transforms.Compose([transforms.RandomCrop(32, padding=4),
+                                              transforms.Resize((128, 128)),
                                               transforms.RandomHorizontalFlip(),
                                               transforms.ToTensor(),
                                               transforms.Normalize(self.mean, self.std)])
@@ -105,7 +106,8 @@ class BaseCifarModel(LightningModule):
                           pin_memory=True)
 
     def val_dataloader(self):
-        transform_val = transforms.Compose([transforms.ToTensor(),
+        transform_val = transforms.Compose([transforms.Resize((128, 128)),
+                                            transforms.ToTensor(),
                                             transforms.Normalize(self.mean, self.std)])
         dataset = CIFAR10(root=self.hyperparams.data_path,
                           train=False,
