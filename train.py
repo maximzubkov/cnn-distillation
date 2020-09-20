@@ -24,24 +24,24 @@ DATA_FOLDER = "data"
 
 
 def train(experiment: str, num_workers: int = 0, is_test: bool = False,
-          is_freezed: bool = True, resume_from_checkpoint: str = None):
+          is_unfreezed: bool = False, resume_from_checkpoint: str = None):
     seed_everything(SEED)
 
     hyperparams_config_function = get_test_hyperparams if is_test else get_default_hyperparams
     hyperparams_config = hyperparams_config_function(DATA_FOLDER)
-    freezed_flag = "freezed" if is_freezed else "unfreezed"
+    freezed_flag = "unfreezed" if is_unfreezed else "freezed"
     if experiment == "distillation":
-        config_function = get_freeze_distillation_config if is_freezed else get_distillation_config
+        config_function = get_distillation_config if is_unfreezed else get_freeze_distillation_config
         config = config_function()
         project_name = f"distillation-{freezed_flag}"
         model = DistillationCifarModel(config, hyperparams_config, num_workers)
     elif experiment == "teacher":
-        config_function = get_resnet_freeze_teacher_config if is_freezed else get_resnet_teacher_config
+        config_function = get_resnet_teacher_config if is_unfreezed else get_resnet_freeze_teacher_config
         config = config_function()
         project_name = f"resnet-{config.num_layers}-{freezed_flag}"
         model = SingleCifarModel(config, hyperparams_config, num_workers)
     elif experiment == "student":
-        config_function = get_resnet_freeze_student_config if is_freezed else get_resnet_student_config
+        config_function = get_resnet_student_config if is_unfreezed else get_resnet_freeze_student_config
         config = config_function()
         project_name = f"resnet-{config.num_layers}-{freezed_flag}"
         model = SingleCifarModel(config, hyperparams_config, num_workers)
@@ -83,10 +83,10 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
 if __name__ == "__main__":
     arg_parser = ArgumentParser()
     arg_parser.add_argument("experiment", type=str, choices=["teacher", "student", "distillation"])
-    arg_parser.add_argument("--freeze", type=bool, default=True)
+    arg_parser.add_argument("--unfreeze", action="store_true")
     arg_parser.add_argument("--n_workers", type=int, default=0)
     arg_parser.add_argument("--test", action="store_true")
     arg_parser.add_argument("--resume", type=str, default=None)
     args = arg_parser.parse_args()
 
-    train(args.experiment, args.n_workers, args.test, args.freeze, args.resume)
+    train(args.experiment, args.n_workers, args.test, args.unfreeze, args.resume)
