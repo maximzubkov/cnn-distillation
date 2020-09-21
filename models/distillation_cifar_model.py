@@ -1,7 +1,6 @@
 from typing import Dict
 
 import torch
-import torch.nn.functional as F
 from pytorch_lightning.metrics.functional import confusion_matrix
 
 from configs import DistillationConfig, ModelHyperparameters
