@@ -33,11 +33,11 @@ def get_test_hyperparams(data_path: str) -> ModelHyperparameters:
 def get_kd_default_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
-        n_epochs=15,
+        n_epochs=10,
         batch_size=32,
-        learning_rate=0.0001,
+        learning_rate=0.001,
         weight_decay=0.0001,
-        decay_gamma=0.95,
+        decay_gamma=0.7,
         shuffle_data=True,
     )
 
