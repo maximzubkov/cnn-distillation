@@ -1,7 +1,5 @@
 
 from argparse import ArgumentParser
-from math import ceil
-from multiprocessing import cpu_count
 
 import torch
 from pytorch_lightning import Trainer, seed_everything

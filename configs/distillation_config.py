@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from .model_config import ModelConfig
 from .loss_config import LossConfig
+from .model_config import ModelConfig
 
 
 @dataclass(frozen=True)

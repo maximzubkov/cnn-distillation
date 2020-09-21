@@ -7,9 +7,9 @@
 
 |          | Teacher  | Method        | Pretrained | Freeze Encoder | Accuracy |
 |----------|----------|---------------|------------|----------------|----------|
-| ResNet18 | ❌        | Cross Entropy |     ✅     |       ✅       |   93.07   |
-| ResNet18 | ❌        | Cross Entropy |     ✅     |       ❌       |   93.6   |
-| ResNet50 | ❌        | Cross Entropy |     ✅     |       ✅       |   95.7   |
-| ResNet50 | ❌        | Cross Entropy |     ✅     |       ❌       |   93.8   |
-| ResNet18 | ResNet50  | Embedding MSE |     ✅     |       ✅       |   93.3   |
+| ResNet18 | ❌        | Cross Entropy |     ✅     |       ✅       |   93.07  |
+| ResNet18 | ❌        | Cross Entropy |     ✅     |       ❌       |   93.65   |
+| ResNet50 | ❌        | Cross Entropy |     ✅     |       ✅       |   95.71   |
+| ResNet50 | ❌        | Cross Entropy |     ✅     |       ❌       |   93.83   |
+| ResNet18 | ResNet50  | Embedding MSE |     ✅     |       ✅       |  93.29   |
 | ResNet18 | ResNet50  | Embedding MSE |     ✅     |       ❌       |   94.2   |

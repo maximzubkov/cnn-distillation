@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
-from os.path import join
 from os import cpu_count
+from os.path import join
 
 import torch
 import wandb

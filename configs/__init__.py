@@ -2,8 +2,8 @@ from os.path import join
 
 from .distillation_config import DistillationConfig
 from .hyperparams_config import ModelHyperparameters
-from .model_config import ModelConfig
 from .loss_config import KDLossConfig
+from .model_config import ModelConfig
 
 
 def get_default_hyperparams(data_path: str) -> ModelHyperparameters:
