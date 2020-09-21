@@ -9,7 +9,7 @@ from .loss_config import KDLossConfig
 def get_default_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
-        n_epochs=15,
+        n_epochs=10,
         batch_size=32,
         learning_rate=0.0003,
         weight_decay=0.0001,
@@ -64,7 +64,7 @@ def get_resnet_teacher_config() -> ModelConfig:
     )
 
 
-def get_resnet_freeze_teacher_config() -> ModelConfig:
+def get_resnet_frozen_teacher_config() -> ModelConfig:
     return ModelConfig(
         model_name="resnet",
         num_layers=50,
@@ -84,7 +84,7 @@ def get_resnet_student_config() -> ModelConfig:
     )
 
 
-def get_resnet_freeze_student_config() -> ModelConfig:
+def get_resnet_frozen_student_config() -> ModelConfig:
     return ModelConfig(
         model_name="resnet",
         num_layers=18,
@@ -101,16 +101,17 @@ def get_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=True,
                                    freeze_encoder=False,
-                                   checkpoint_path=join("models", "checkpoints", "teacher_unfreezed.ckpt")),
+                                   checkpoint_path=join("models", "checkpoints", "teacher_unfrozen.ckpt")),
         student_config=ModelConfig(model_name="resnet",
                                    num_layers=18,
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
+        loss_config=KDLossConfig(loss="KD", alpha=0.1, T=2)
     )
 
 
-def get_freeze_distillation_config() -> DistillationConfig:
+def get_frozen_distillation_config() -> DistillationConfig:
     return DistillationConfig(
         teacher_config=ModelConfig(model_name="resnet",
                                    num_layers=50,
