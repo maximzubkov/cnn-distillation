@@ -29,7 +29,7 @@ def get_test_hyperparams(data_path: str) -> ModelHyperparameters:
     )
 
 
-def get_kd_test_hyperparams(data_path: str) -> ModelHyperparameters:
+def get_kd_default_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=15,
@@ -41,7 +41,7 @@ def get_kd_test_hyperparams(data_path: str) -> ModelHyperparameters:
     )
 
 
-def get_kd_default_hyperparams(data_path: str) -> ModelHyperparameters:
+def get_kd_test_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=10,
