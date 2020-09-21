@@ -123,5 +123,5 @@ def get_freeze_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=KDLossConfig(loss="KD", alpha=0.5, T=2)
+        loss_config=KDLossConfig(loss="KD", alpha=0.1, T=2)
     )
