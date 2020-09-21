@@ -7,3 +7,4 @@ from .model_config import ModelConfig
 class DistillationConfig:
     teacher_config: ModelConfig
     student_config: ModelConfig
+    loss: str

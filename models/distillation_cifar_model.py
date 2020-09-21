@@ -12,7 +12,8 @@ class DistillationCifarModel(BaseCifarModel):
     def __init__(self, model_config: DistillationConfig,
                  hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__(hyperparams_config, num_workers)
-        self.criterion = torch.nn.MSELoss()
+        if model_config.loss == "MSE":
+            self.criterion = torch.nn.MSELoss()
         self.student = self.get_model(model_config.student_config)
         self.teacher = self.get_model(model_config.teacher_config)
         self.save_hyperparameters()
@@ -20,20 +21,22 @@ class DistillationCifarModel(BaseCifarModel):
     def forward(self, images: torch.Tensor):
         return self.student(images)
 
-    def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
+    def _compute_loss(self, encoding: torch.Tensor, logits: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
         images, labels = batch
-        student_encoding = self.student.encode(images)
-        student_logits = self.student.classifier(student_encoding)
         with torch.no_grad():
             teacher_encoding = self.teacher.encode(images)
             teacher_logits = self.teacher.classifier(teacher_encoding)
-        loss = self.criterion(teacher_encoding, student_encoding) + self.criterion(student_logits, teacher_logits)
+        return self.criterion(encoding, teacher_encoding) + self.criterion(logits, teacher_logits)
+
+    def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
+        images, labels = batch
+        encoding = self.student.encode(images)
+        logits = self.student.classifier(encoding)
+        loss = self._compute_loss(encoding, logits, batch)
         with torch.no_grad():
             log = {'train/loss': loss}
-            conf_matrix = confusion_matrix(student_logits.argmax(-1), labels.squeeze(0))
+            conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))
             log["train/accuracy"] = conf_matrix.trace() / conf_matrix.sum()
-            conf_matrix_2 = confusion_matrix(teacher_logits.argmax(-1), labels.squeeze(0))
-            print(conf_matrix_2.trace() / conf_matrix_2.sum())
         progress_bar = {"train/accuracy": log["train/accuracy"]}
 
         return {"loss": loss, "log": log, "progress_bar": progress_bar, "confusion_matrix": conf_matrix}
@@ -41,12 +44,9 @@ class DistillationCifarModel(BaseCifarModel):
     def validation_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         # [batch size; num_classes]
         images, labels = batch
-        student_encoding = self.student.encode(images)
-        teacher_encoding = self.teacher.encode(images)
-        student_logits = self.student.classifier(student_encoding)
-        teacher_logits = self.teacher.classifier(teacher_encoding)
-        loss = F.mse_loss(student_encoding, teacher_encoding) + F.mse_loss(teacher_logits, student_logits)
-        logits = self.student.classifier(student_encoding)
+        encoding = self.student.encode(images)
+        logits = self.student.classifier(encoding)
+        loss = self._compute_loss(encoding, logits, batch)
         conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))
 
         return {"val_loss": loss, "confusion_matrix": conf_matrix}

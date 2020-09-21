@@ -15,7 +15,9 @@ from configs import (
     get_test_hyperparams,
     get_default_hyperparams,
     get_distillation_config,
-    get_freeze_distillation_config
+    get_freeze_distillation_config,
+    get_kd_test_hyperparams,
+    get_kd_default_hyperparams
 )
 from models import SingleCifarModel, DistillationCifarModel
 
@@ -26,8 +28,10 @@ DATA_FOLDER = "data"
 def train(experiment: str, num_workers: int = 0, is_test: bool = False,
           is_unfreezed: bool = False, resume_from_checkpoint: str = None):
     seed_everything(SEED)
-
-    hyperparams_config_function = get_test_hyperparams if is_test else get_default_hyperparams
+    if experiment == "distillation":
+        hyperparams_config_function = get_kd_test_hyperparams if is_test else get_kd_default_hyperparams
+    else:
+        hyperparams_config_function = get_test_hyperparams if is_test else get_default_hyperparams
     hyperparams_config = hyperparams_config_function(DATA_FOLDER)
     freezed_flag = "unfreezed" if is_unfreezed else "freezed"
     if experiment == "distillation":
