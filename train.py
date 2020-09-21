@@ -37,7 +37,7 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
     if experiment == "distillation":
         config_function = get_distillation_config if is_unfreezed else get_freeze_distillation_config
         config = config_function()
-        project_name = f"distillation-{freezed_flag}"
+        project_name = f"distillation-{freezed_flag}-{config.loss_config.loss}"
         model = DistillationCifarModel(config, hyperparams_config, num_workers)
     elif experiment == "teacher":
         config_function = get_resnet_teacher_config if is_unfreezed else get_resnet_freeze_teacher_config

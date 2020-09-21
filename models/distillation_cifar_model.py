@@ -1,6 +1,8 @@
 from typing import Dict
 
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 from pytorch_lightning.metrics.functional import confusion_matrix
 
 from configs import DistillationConfig, ModelHyperparameters
@@ -11,11 +13,23 @@ class DistillationCifarModel(BaseCifarModel):
     def __init__(self, model_config: DistillationConfig,
                  hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__(hyperparams_config, num_workers)
-        if model_config.loss == "MSE":
-            self.criterion = torch.nn.MSELoss()
+        self.loss_config = model_config.loss_config
+        if self.loss_config.loss == "KD":
+            self.KLDiv = nn.KLDivLoss()
+            self.criterion = self._kd
         self.student = self.get_model(model_config.student_config)
         self.teacher = self.get_model(model_config.teacher_config)
         self.save_hyperparameters()
+
+    def _kd(self, logits: torch.Tensor, teacher_logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        alpha = self.loss_config.alpha
+        temp = self.loss_config.T
+        softmax_logits = F.log_softmax(logits / temp, dim=1)
+        softmax_teacher_logits = F.softmax(teacher_logits / temp, dim=1)
+        kldiv = self.KLDiv(softmax_logits, softmax_teacher_logits)
+        cross_entropy = F.cross_entropy(logits, labels)
+        loss = kldiv * (alpha * temp * temp) + cross_entropy * (1. - alpha)
+        return loss
 
     def forward(self, images: torch.Tensor):
         return self.student(images)
@@ -25,7 +39,7 @@ class DistillationCifarModel(BaseCifarModel):
         with torch.no_grad():
             teacher_encoding = self.teacher.encode(images)
             teacher_logits = self.teacher.classifier(teacher_encoding)
-        return self.criterion(encoding, teacher_encoding) + self.criterion(logits, teacher_logits)
+        return self.criterion(logits, teacher_logits, labels)
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         images, labels = batch

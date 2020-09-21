@@ -3,6 +3,7 @@ from os.path import join
 from .distillation_config import DistillationConfig
 from .hyperparams_config import ModelHyperparameters
 from .model_config import ModelConfig
+from .loss_config import KDLossConfig
 
 
 def get_default_hyperparams(data_path: str) -> ModelHyperparameters:
@@ -34,7 +35,7 @@ def get_kd_default_hyperparams(data_path: str) -> ModelHyperparameters:
         data_path=data_path,
         n_epochs=15,
         batch_size=32,
-        learning_rate=0.01,
+        learning_rate=0.0001,
         weight_decay=0.0001,
         decay_gamma=0.95,
         shuffle_data=True,
@@ -122,5 +123,5 @@ def get_freeze_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss="MSE"
+        loss_config=KDLossConfig(loss="KD", alpha=0.5, T=2)
     )
