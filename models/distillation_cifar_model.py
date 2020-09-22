@@ -1,13 +1,11 @@
 from typing import Dict
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from pytorch_lightning.metrics.functional import confusion_matrix
 
 from configs import DistillationConfig, ModelHyperparameters
 from .base_cifar_model import BaseCifarModel
-from.loss import KDLoss, AttentionLoss
+from .loss import KDLoss, AttentionLoss
 
 
 class DistillationCifarModel(BaseCifarModel):
