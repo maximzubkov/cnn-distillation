@@ -165,7 +165,7 @@ def get_attention_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, eps=0.1, n_cr=15)
+        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, eps=0.1, n_cr=5)
     )
 
 
@@ -182,5 +182,5 @@ def get_frozen_attention_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, eps=0.1, n_cr=15)
+        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, eps=0.1, n_cr=5)
     )

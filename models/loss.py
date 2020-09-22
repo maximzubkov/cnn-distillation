@@ -30,13 +30,13 @@ class AttentionLoss(nn.Module):
         self.n_cr = n_cr
 
     def forward(self, logits: torch.Tensor, teacher_logits: torch.Tensor,
-                labels: torch.Tensor, batch_idx: int) -> torch.Tensor:
-        softmax_logits = F.log_softmax(logits / self.temp, dim=1).unsqueeze(1)
-        softmax_teacher_logits = F.softmax(teacher_logits / self.temp, dim=1).unsqueeze(-1)
-        scaling = softmax_logits.norm(2) * softmax_teacher_logits.norm(2)
-        attn = torch.bmm(softmax_logits @ self.attention, softmax_teacher_logits).reshape(-1) / scaling
-        loss = torch.mean(attn) * (self.alpha * self.temp * self.temp)
-        if batch_idx % self.n_cr != 0:
-            cross_entropy = F.cross_entropy(logits, labels)
-            loss += cross_entropy * (1. - self.alpha)
+                labels: torch.Tensor) -> torch.Tensor:
+        softmax_logits = F.log_softmax(logits / self.temp, dim=1)
+        softmax_teacher_logits = F.softmax(teacher_logits / self.temp, dim=1)
+        scaling = softmax_logits.norm(p=2, dim=1) * softmax_teacher_logits.norm(p=2, dim=1)
+        attn = torch.bmm(self.attention(softmax_logits).unsqueeze(1), softmax_teacher_logits.unsqueeze(-1))
+        dist = attn.reshape(-1) / scaling
+        loss = torch.mean(dist) * (self.alpha * self.temp * self.temp)
+        cross_entropy = F.cross_entropy(logits, labels)
+        loss += cross_entropy * (1. - self.alpha)
         return loss
