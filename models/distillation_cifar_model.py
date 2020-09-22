@@ -7,6 +7,7 @@ from pytorch_lightning.metrics.functional import confusion_matrix
 
 from configs import DistillationConfig, ModelHyperparameters
 from .base_cifar_model import BaseCifarModel
+from .sinkhorn import SinkhornDistance
 
 
 class DistillationCifarModel(BaseCifarModel):
@@ -17,6 +18,11 @@ class DistillationCifarModel(BaseCifarModel):
         if self.loss_config.loss == "KD":
             self.KLDiv = nn.KLDivLoss()
             self.criterion = self._kd
+        elif self.loss_config.loss == "Sinkhorn":
+            self.SD = SinkhornDistance(eps=self.loss_config.eps, max_iter=self.loss_config.max_iter)
+            self.criterion = self._sinkhorn
+        else:
+            raise ValueError(f"Unknown loss function {self.loss_config.loss}")
         self.student = self.get_model(model_config.student_config)
         self.teacher = self.get_model(model_config.teacher_config)
         self.save_hyperparameters()
@@ -29,6 +35,16 @@ class DistillationCifarModel(BaseCifarModel):
         kldiv = self.KLDiv(softmax_logits, softmax_teacher_logits)
         cross_entropy = F.cross_entropy(logits, labels)
         loss = kldiv * (alpha * temp * temp) + cross_entropy * (1. - alpha)
+        return loss
+
+    def _sinkhorn(self, logits: torch.Tensor, teacher_logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+        alpha = self.loss_config.alpha
+        temp = self.loss_config.T
+        softmax_logits = F.log_softmax(logits / temp, dim=1)
+        softmax_teacher_logits = F.softmax(teacher_logits / temp, dim=1)
+        sd, _, _ = self.SD(softmax_logits, softmax_teacher_logits)
+        cross_entropy = F.cross_entropy(logits, labels)
+        loss = sd * (alpha * temp * temp) + cross_entropy * (1. - alpha)
         return loss
 
     def forward(self, images: torch.Tensor):
