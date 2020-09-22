@@ -45,7 +45,6 @@ class BaseCifarModel(LightningModule):
 
     def configure_optimizers(self) -> Tuple[List[Optimizer], List[_LRScheduler]]:
         if self.hyperparams.optimizer == "Momentum":
-            # using the same momentum value as in original realization by Alon
             optimizer = SGD(
                 self.parameters(),
                 self.hyperparams.learning_rate,
