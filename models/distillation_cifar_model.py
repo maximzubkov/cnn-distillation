@@ -16,12 +16,13 @@ class DistillationCifarModel(BaseCifarModel):
         if self.loss_config.loss == "KD":
             self.criterion = KDLoss(alpha=self.loss_config.alpha,
                                     temp=self.loss_config.T)
+            self.is_student_eval_func = lambda batch_idx: False
         elif self.loss_config.loss == "Attention":
             self.criterion = AttentionLoss(alpha=self.loss_config.alpha,
                                            temp=self.loss_config.T,
                                            n_cr=self.loss_config.n_cr,
-                                           device=self.device,
                                            num_classes=self.num_classes)
+            self.is_student_eval_func = lambda batch_idx: batch_idx % self.loss_config.n_cr
         else:
             raise ValueError(f"Unknown loss function {self.loss_config.loss}")
         self.student = self.get_model(model_config.student_config)
@@ -38,7 +39,12 @@ class DistillationCifarModel(BaseCifarModel):
         return self.criterion(logits, teacher_logits, labels, batch_idx)
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
+        self.student.train()
         images, labels = batch
+        if self.is_student_eval_func(batch_idx):
+            self.student.eval()
+        else:
+            self.student.train()
         logits = self.student(images)
         loss = self._compute_loss(logits, batch, batch_idx)
         with torch.no_grad():

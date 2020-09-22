@@ -21,10 +21,10 @@ class KDLoss(nn.Module):
 
 
 class AttentionLoss(nn.Module):
-    def __init__(self, alpha: float, temp: float, n_cr: int, device: str, num_classes: int):
+    def __init__(self, alpha: float, temp: float, n_cr: int, num_classes: int):
         super().__init__()
-        self.device = device
-        self.attention = torch.ones((num_classes, num_classes)).to(device)
+        self.attention = nn.Linear(num_classes, num_classes, bias=False)
+        self.attention.weight.data.copy_(torch.eye(num_classes, num_classes))
         self.alpha = alpha
         self.temp = temp
         self.n_cr = n_cr

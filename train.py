@@ -46,7 +46,7 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
         config = config_function()
         project_name = f"distillation-{freezed_flag}-{config.loss_config.loss}"
         model = DistillationCifarModel(config, hyperparams_config, num_workers)
-    if experiment == "attention_distillation":
+    elif experiment == "attention_distillation":
         config_function = get_attention_distillation_config if is_unfrozen else get_frozen_attention_distillation_config
         config = config_function()
         project_name = f"distillation-{freezed_flag}-{config.loss_config.loss}"
