@@ -137,4 +137,3 @@ dmypy.json
 wandb/
 data/
 lightning_logs/
-build/
