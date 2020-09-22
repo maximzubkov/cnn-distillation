@@ -16,5 +16,4 @@ class KDLossConfig(LossConfig):
 class AttentionLossConfig(LossConfig):
     alpha: float
     T: float
-    eps: float
     n_cr: int

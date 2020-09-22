@@ -22,7 +22,7 @@ class DistillationCifarModel(BaseCifarModel):
                                            temp=self.loss_config.T,
                                            n_cr=self.loss_config.n_cr,
                                            num_classes=self.num_classes)
-            self.is_student_eval_func = lambda batch_idx: (batch_idx % self.loss_config.n_cr) == 0
+            self.is_student_eval_func = lambda batch_idx: (batch_idx % self.loss_config.n_cr) > 90
         else:
             raise ValueError(f"Unknown loss function {self.loss_config.loss}")
         self.student = self.get_model(model_config.student_config)
@@ -32,21 +32,19 @@ class DistillationCifarModel(BaseCifarModel):
     def forward(self, images: torch.Tensor):
         return self.student(images)
 
-    def _compute_loss(self, logits: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
+    def _compute_loss(self, logits: torch.Tensor, batch: torch.Tensor, is_student_evaled: bool) -> torch.Tensor:
         images, labels = batch
         with torch.no_grad():
             teacher_logits = self.teacher(images)
-        return self.criterion(logits, teacher_logits, labels)
+        return self.criterion(logits, teacher_logits, labels, is_student_evaled)
 
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         self.student.train()
         images, labels = batch
-        if self.is_student_eval_func(batch_idx):
-            self.student.eval()
-        else:
-            self.student.train()
+        is_student_evaled = self.is_student_eval_func(batch_idx)
+        self.student.eval() if is_student_evaled else self.student.train()
         logits = self.student(images)
-        loss = self._compute_loss(logits, batch)
+        loss = self._compute_loss(logits, batch, is_student_evaled)
         with torch.no_grad():
             log = {'train/loss': loss}
             conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))
@@ -59,7 +57,7 @@ class DistillationCifarModel(BaseCifarModel):
         # [batch size; num_classes]
         images, labels = batch
         logits = self.student(images)
-        loss = self._compute_loss(logits, batch)
+        loss = self._compute_loss(logits, batch, is_student_evaled=False)
         conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))
 
         return {"val_loss": loss, "confusion_matrix": conf_matrix}

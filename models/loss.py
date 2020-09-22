@@ -11,7 +11,7 @@ class KDLoss(nn.Module):
         self.temp = temp
 
     def forward(self, logits: torch.Tensor, teacher_logits: torch.Tensor,
-                labels: torch.Tensor, batch_idx: int) -> torch.Tensor:
+                labels: torch.Tensor, is_student_evaled: bool) -> torch.Tensor:
         softmax_logits = F.log_softmax(logits / self.temp, dim=1)
         softmax_teacher_logits = F.softmax(teacher_logits / self.temp, dim=1)
         kldiv = self.KLDiv(softmax_logits, softmax_teacher_logits)
@@ -30,7 +30,8 @@ class AttentionLoss(nn.Module):
         self.n_cr = n_cr
 
     def forward(self, logits: torch.Tensor, teacher_logits: torch.Tensor,
-                labels: torch.Tensor) -> torch.Tensor:
+                labels: torch.Tensor, is_student_evaled: bool) -> torch.Tensor:
+        self.attention.train() if is_student_evaled else self.attention.eval()
         softmax_logits = F.log_softmax(logits / self.temp, dim=1)
         softmax_teacher_logits = F.softmax(teacher_logits / self.temp, dim=1)
         scaling = softmax_logits.norm(p=2, dim=1) * softmax_teacher_logits.norm(p=2, dim=1)
