@@ -17,12 +17,12 @@ from configs import (
     get_default_hyperparams,
     get_kd_distillation_config,
     get_frozen_kd_distillation_config,
-    get_sinkhorn_distillation_config,
-    get_frozen_sinkhorn_distillation_config,
+    get_attention_distillation_config,
+    get_frozen_attention_distillation_config,
     get_kd_test_hyperparams,
     get_kd_default_hyperparams,
-    get_sinkhorn_test_hyperparams,
-    get_sinkhorn_default_hyperparams
+    get_attention_test_hyperparams,
+    get_attention_default_hyperparams
 )
 from models import SingleCifarModel, DistillationCifarModel
 
@@ -35,8 +35,8 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
     seed_everything(SEED)
     if experiment == "kd_distillation":
         hyperparams_config_function = get_kd_test_hyperparams if is_test else get_kd_default_hyperparams
-    elif experiment == "sinkhorn_distillation":
-        hyperparams_config_function = get_sinkhorn_test_hyperparams if is_test else get_sinkhorn_default_hyperparams
+    elif experiment == "attention_distillation":
+        hyperparams_config_function = get_attention_test_hyperparams if is_test else get_attention_default_hyperparams
     else:
         hyperparams_config_function = get_test_hyperparams if is_test else get_default_hyperparams
     hyperparams_config = hyperparams_config_function(DATA_FOLDER)
@@ -46,8 +46,8 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
         config = config_function()
         project_name = f"distillation-{freezed_flag}-{config.loss_config.loss}"
         model = DistillationCifarModel(config, hyperparams_config, num_workers)
-    if experiment == "kd_distillation":
-        config_function = get_sinkhorn_distillation_config if is_unfrozen else get_frozen_sinkhorn_distillation_config
+    if experiment == "attention_distillation":
+        config_function = get_attention_distillation_config if is_unfrozen else get_frozen_attention_distillation_config
         config = config_function()
         project_name = f"distillation-{freezed_flag}-{config.loss_config.loss}"
         model = DistillationCifarModel(config, hyperparams_config, num_workers)
@@ -99,7 +99,7 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
 if __name__ == "__main__":
     arg_parser = ArgumentParser()
     arg_parser.add_argument("experiment", type=str, choices=["teacher", "student", "kd_distillation",
-                                                             "sinkhorn_distillation"])
+                                                             "attention_distillation"])
     arg_parser.add_argument("--unfrozen", action="store_true")
     arg_parser.add_argument("--n_workers", type=int, default=cpu_count())
     arg_parser.add_argument("--test", action="store_true")

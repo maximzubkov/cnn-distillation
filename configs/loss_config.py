@@ -13,8 +13,8 @@ class KDLossConfig(LossConfig):
 
 
 @dataclass(frozen=True)
-class SinkhornLossConfig(LossConfig):
+class AttentionLossConfig(LossConfig):
     alpha: float
     T: float
     eps: float
-    max_iter: int
+    n_cr: int

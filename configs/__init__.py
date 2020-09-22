@@ -2,7 +2,7 @@ from os.path import join
 
 from .distillation_config import DistillationConfig
 from .hyperparams_config import ModelHyperparameters
-from .loss_config import KDLossConfig, SinkhornLossConfig
+from .loss_config import KDLossConfig, AttentionLossConfig
 from .model_config import ModelConfig
 
 
@@ -54,7 +54,7 @@ def get_kd_test_hyperparams(data_path: str) -> ModelHyperparameters:
     )
 
 
-def get_sinkhorn_default_hyperparams(data_path: str) -> ModelHyperparameters:
+def get_attention_default_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=15,
@@ -66,7 +66,7 @@ def get_sinkhorn_default_hyperparams(data_path: str) -> ModelHyperparameters:
     )
 
 
-def get_sinkhorn_test_hyperparams(data_path: str) -> ModelHyperparameters:
+def get_attention_test_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=10,
@@ -152,7 +152,7 @@ def get_frozen_kd_distillation_config() -> DistillationConfig:
     )
 
 
-def get_sinkhorn_distillation_config() -> DistillationConfig:
+def get_attention_distillation_config() -> DistillationConfig:
     return DistillationConfig(
         teacher_config=ModelConfig(model_name="resnet",
                                    num_layers=50,
@@ -165,11 +165,11 @@ def get_sinkhorn_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=SinkhornLossConfig(loss="Sinkhorn", alpha=0.5, T=1.5, eps=0.1, max_iter=40)
+        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, eps=0.1, n_cr=4)
     )
 
 
-def get_frozen_sinkhorn_distillation_config() -> DistillationConfig:
+def get_frozen_attention_distillation_config() -> DistillationConfig:
     return DistillationConfig(
         teacher_config=ModelConfig(model_name="resnet",
                                    num_layers=50,
@@ -182,5 +182,5 @@ def get_frozen_sinkhorn_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=SinkhornLossConfig(loss="Sinkhorn", alpha=0.5, T=1.5, eps=0.1, max_iter=40)
+        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, eps=0.1, n_cr=4)
     )
