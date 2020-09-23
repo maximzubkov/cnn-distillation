@@ -22,7 +22,7 @@ class DistillationCifarModel(BaseCifarModel):
                                            temp=self.loss_config.T,
                                            n_cr=self.loss_config.n_cr,
                                            num_classes=self.num_classes)
-            self.is_student_eval_func = lambda batch_idx: (batch_idx % self.loss_config.n_cr) > 90
+            self.is_student_eval_func = lambda batch_idx: (batch_idx % self.loss_config.n_cr) < 300
         else:
             raise ValueError(f"Unknown loss function {self.loss_config.loss}")
         self.student = self.get_model(model_config.student_config)
