@@ -46,12 +46,11 @@ class TinyConv(nn.Module):
 
 
 class AttentionLoss(nn.Module):
-    def __init__(self, alpha: float, temp: float, n_cr: int, num_classes: int):
+    def __init__(self, alpha: float, temp: float):
         super().__init__()
         self.discriminator = TinyConv()
         self.alpha = alpha
         self.temp = temp
-        self.n_cr = n_cr
 
     def forward(self, logits: torch.Tensor, teacher_logits: torch.Tensor,
                 labels: torch.Tensor, is_student_evaled: bool) -> torch.Tensor:
