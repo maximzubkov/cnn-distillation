@@ -77,5 +77,6 @@ class AttentionLoss(nn.Module):
         """
         Wassersten loss for discriminator
         """
-        return self.discriminator(student_logits.unsqueeze(1)).mean() - \
-               self.discriminator(teacher_logits.unsqueeze(1)).mean()
+        s_loss = self.discriminator(student_logits.unsqueeze(1)).mean()
+        t_loss = self.discriminator(teacher_logits.unsqueeze(1)).mean()
+        return s_loss - t_loss
