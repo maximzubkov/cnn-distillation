@@ -13,6 +13,8 @@ class ModelHyperparameters:
 
     shuffle_data: bool
 
+    grad_clip: float = 0
+
     save_every_epoch: int = 1
     val_every_epoch: int = 1
     log_every_epoch: int = 10

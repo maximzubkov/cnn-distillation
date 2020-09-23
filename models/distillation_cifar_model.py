@@ -22,7 +22,7 @@ class DistillationCifarModel(BaseCifarModel):
                                            temp=self.loss_config.T,
                                            n_cr=self.loss_config.n_cr,
                                            num_classes=self.num_classes)
-            self.is_student_eval_func = lambda batch_idx: (batch_idx % self.loss_config.n_cr) < 300
+            self.is_student_eval_func = lambda batch_idx: (batch_idx % self.loss_config.n_cr) < 30
         else:
             raise ValueError(f"Unknown loss function {self.loss_config.loss}")
         self.student = self.get_model(model_config.student_config)
@@ -45,6 +45,8 @@ class DistillationCifarModel(BaseCifarModel):
         self.student.eval() if is_student_evaled else self.student.train()
         logits = self.student(images)
         loss = self._compute_loss(logits, batch, is_student_evaled)
+        if is_student_evaled:
+            self.student.zero_grad()
         with torch.no_grad():
             log = {'train/loss': loss}
             conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))

@@ -89,6 +89,7 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
         gpus=gpu,
         callbacks=[lr_logger],
         reload_dataloaders_every_epoch=True,
+        gradient_clip_val=hyperparams_config.grad_clip
     )
 
     trainer.fit(model)

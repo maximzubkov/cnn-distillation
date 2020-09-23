@@ -65,6 +65,8 @@ class AttentionLoss(nn.Module):
             loss = self.generator_loss(softmax_logits)
         loss *= (self.alpha * self.temp * self.temp)
         loss += F.cross_entropy(logits, labels) * (1. - self.alpha)
+        if is_student_evaled:
+            self.discriminator.zero_grad()
         return loss
 
     def generator_loss(self, student_logits: torch.Tensor) -> torch.Tensor:

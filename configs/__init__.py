@@ -63,6 +63,7 @@ def get_attention_default_hyperparams(data_path: str) -> ModelHyperparameters:
         weight_decay=0.0001,
         decay_gamma=0.7,
         shuffle_data=True,
+        grad_clip=0.5
     )
 
 
@@ -75,6 +76,7 @@ def get_attention_test_hyperparams(data_path: str) -> ModelHyperparameters:
         weight_decay=0.0001,
         decay_gamma=0.95,
         shuffle_data=True,
+        grad_clip=0.5
     )
 
 
@@ -165,7 +167,7 @@ def get_attention_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, n_cr=1000)
+        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, n_cr=500)
     )
 
 
@@ -182,5 +184,5 @@ def get_frozen_attention_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, n_cr=1000)
+        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, n_cr=500)
     )
