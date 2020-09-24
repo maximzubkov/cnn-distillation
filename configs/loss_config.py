@@ -9,10 +9,10 @@ class LossConfig:
 @dataclass(frozen=True)
 class KDLossConfig(LossConfig):
     alpha: float
-    temp: float
+    T: float
 
 
 @dataclass(frozen=True)
 class RKDLossConfig(LossConfig):
     lambda_: float
-    temp: float
+    T: float

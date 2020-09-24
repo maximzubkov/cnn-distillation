@@ -7,6 +7,7 @@ import wandb
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateLogger
 from pytorch_lightning.loggers import WandbLogger
+
 from utils import configure_experiment
 
 SEED = 7
