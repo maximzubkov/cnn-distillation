@@ -2,7 +2,7 @@ from os.path import join
 
 from .distillation_config import DistillationConfig
 from .hyperparams_config import ModelHyperparameters
-from .loss_config import KDLossConfig, RKDLossConfig
+from .loss_config import KDLossConfig, RKDLossConfig, LDLossConfig
 from .model_config import ModelConfig
 
 
@@ -131,7 +131,7 @@ def get_kd_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=KDLossConfig(loss="KD", alpha=0.5, temp=1.5)
+        loss_config=KDLossConfig(loss="KD", alpha=0.5, T=1.5)
     )
 
 
@@ -148,7 +148,7 @@ def get_frozen_kd_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=KDLossConfig(loss="KD", alpha=0.5, temp=1.5)
+        loss_config=KDLossConfig(loss="KD", alpha=0.5, T=1.5)
     )
 
 
@@ -165,7 +165,7 @@ def get_rkdd_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=RKDLossConfig(loss="RKD_Dist", lambda_=5, temp=1.5)
+        loss_config=RKDLossConfig(loss="RKD_Dist", lambda_=5, T=1.5)
     )
 
 
@@ -182,11 +182,11 @@ def get_frozen_rkdd_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=RKDLossConfig(loss="RKD_Dist", lambda_=5, temp=1.5)
+        loss_config=RKDLossConfig(loss="RKD_Dist", lambda_=5, T=1.5)
     )
 
 
-def get_rkda_distillation_config() -> DistillationConfig:
+def get_ld_distillation_config() -> DistillationConfig:
     return DistillationConfig(
         teacher_config=ModelConfig(model_name="resnet",
                                    num_layers=50,
@@ -199,11 +199,12 @@ def get_rkda_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=RKDLossConfig(loss="RKD_Angle", lambda_=2, temp=1.5)
+        loss_config=LDLossConfig(loss="Wasserstein", alpha=0.5, T=1.5,
+                                 is_student_training_func=lambda idx: (idx % 200) < 20)
     )
 
 
-def get_frozen_rkda_distillation_config() -> DistillationConfig:
+def get_frozen_ld_distillation_config() -> DistillationConfig:
     return DistillationConfig(
         teacher_config=ModelConfig(model_name="resnet",
                                    num_layers=50,
@@ -216,5 +217,6 @@ def get_frozen_rkda_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=RKDLossConfig(loss="RKD_Angle", lambda_=2, temp=1.5)
+        loss_config=LDLossConfig(loss="Wasserstein", alpha=0.5, T=1.5,
+                                 is_student_training_func=lambda idx: (idx % 200) > 20)
     )

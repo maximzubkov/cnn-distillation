@@ -56,7 +56,7 @@ def train(experiment: str, num_workers: int = 0, is_test: bool = False,
 if __name__ == "__main__":
     arg_parser = ArgumentParser()
     arg_parser.add_argument("experiment", type=str, choices=["teacher", "student", "kd_distillation",
-                                                             "rkda_distillation", "rkdd_distillation"])
+                                                             "rkda_distillation", "ld_distillation"])
     arg_parser.add_argument("--unfrozen", action="store_true")
     arg_parser.add_argument("--n_workers", type=int, default=cpu_count())
     arg_parser.add_argument("--test", action="store_true")
