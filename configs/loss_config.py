@@ -13,7 +13,6 @@ class KDLossConfig(LossConfig):
 
 
 @dataclass(frozen=True)
-class AttentionLossConfig(LossConfig):
+class RKDLossConfig(LossConfig):
     alpha: float
     T: float
-    p: float

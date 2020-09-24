@@ -4,3 +4,4 @@ torch~=1.6.0
 torchvision~=0.7.0
 wandb~=0.10.2
 pytorch-lightning==0.9.0
+pytorch-gradcam==0.2.1

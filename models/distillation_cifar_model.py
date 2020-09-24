@@ -1,12 +1,11 @@
 from typing import Dict
-from random import random
 
 import torch
 from pytorch_lightning.metrics.functional import confusion_matrix
 
 from configs import DistillationConfig, ModelHyperparameters
 from .base_cifar_model import BaseCifarModel
-from .loss import KDLoss, AttentionLoss
+from .loss import KDLoss, RKDDistanceLoss, RKDAngleLoss
 
 
 class DistillationCifarModel(BaseCifarModel):
@@ -17,11 +16,12 @@ class DistillationCifarModel(BaseCifarModel):
         if self.loss_config.loss == "KD":
             self.criterion = KDLoss(alpha=self.loss_config.alpha,
                                     temp=self.loss_config.T)
-            self.is_student_eval_func = lambda batch_idx: False
-        elif self.loss_config.loss == "Attention":
-            self.criterion = AttentionLoss(alpha=self.loss_config.alpha,
-                                           temp=self.loss_config.T)
-            self.is_student_eval_func = lambda: random() < self.loss_config.p
+        elif self.loss_config.loss == "RKD_Dist":
+            self.criterion = RKDDistanceLoss(alpha=self.loss_config.alpha,
+                                             temp=self.loss_config.T)
+        elif self.loss_config.loss == "RKD_Angle":
+            self.criterion = RKDAngleLoss(alpha=self.loss_config.alpha,
+                                          temp=self.loss_config.T)
         else:
             raise ValueError(f"Unknown loss function {self.loss_config.loss}")
         self.student = self.get_model(model_config.student_config)
@@ -31,21 +31,13 @@ class DistillationCifarModel(BaseCifarModel):
     def forward(self, images: torch.Tensor):
         return self.student(images)
 
-    def _compute_loss(self, logits: torch.Tensor, batch: torch.Tensor, is_student_evaled: bool) -> torch.Tensor:
-        images, labels = batch
-        with torch.no_grad():
-            teacher_logits = self.teacher(images)
-        return self.criterion(logits, teacher_logits, labels, is_student_evaled)
-
     def training_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
-        self.student.train()
         images, labels = batch
-        is_student_evaled = self.is_student_eval_func()
-        self.student.eval() if is_student_evaled else self.student.train()
-        logits = self.student(images)
-        loss = self._compute_loss(logits, batch, is_student_evaled)
-        if is_student_evaled:
-            self.student.zero_grad()
+        student_features = self.criterion.extract_features(self.student, batch)
+        logits = student_features.logits
+        with torch.no_grad():
+            teacher_features = self.criterion.extract_features(self.teacher, batch)
+        loss = self.criterion(student_features=student_features, teacher_features=teacher_features, labels=labels)
         with torch.no_grad():
             log = {'train/loss': loss}
             conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))
@@ -57,8 +49,10 @@ class DistillationCifarModel(BaseCifarModel):
     def validation_step(self, batch: torch.Tensor, batch_idx: int) -> Dict:
         # [batch size; num_classes]
         images, labels = batch
-        logits = self.student(images)
-        loss = self._compute_loss(logits, batch, is_student_evaled=False)
+        student_features = self.criterion.extract_features(self.student, batch)
+        teacher_features = self.criterion.extract_features(self.teacher, batch)
+        loss = self.criterion(student_features=student_features, teacher_features=teacher_features, labels=labels)
+        logits = student_features.logits
         conf_matrix = confusion_matrix(logits.argmax(-1), labels.squeeze(0))
 
         return {"val_loss": loss, "confusion_matrix": conf_matrix}

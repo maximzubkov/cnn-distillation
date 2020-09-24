@@ -2,7 +2,7 @@ from os.path import join
 
 from .distillation_config import DistillationConfig
 from .hyperparams_config import ModelHyperparameters
-from .loss_config import KDLossConfig, AttentionLossConfig
+from .loss_config import KDLossConfig, RKDLossConfig
 from .model_config import ModelConfig
 
 
@@ -54,7 +54,7 @@ def get_kd_test_hyperparams(data_path: str) -> ModelHyperparameters:
     )
 
 
-def get_attention_default_hyperparams(data_path: str) -> ModelHyperparameters:
+def get_rkd_default_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=15,
@@ -67,7 +67,7 @@ def get_attention_default_hyperparams(data_path: str) -> ModelHyperparameters:
     )
 
 
-def get_attention_test_hyperparams(data_path: str) -> ModelHyperparameters:
+def get_rkd_test_hyperparams(data_path: str) -> ModelHyperparameters:
     return ModelHyperparameters(
         data_path=data_path,
         n_epochs=10,
@@ -154,7 +154,7 @@ def get_frozen_kd_distillation_config() -> DistillationConfig:
     )
 
 
-def get_attention_distillation_config() -> DistillationConfig:
+def get_rkdd_distillation_config() -> DistillationConfig:
     return DistillationConfig(
         teacher_config=ModelConfig(model_name="resnet",
                                    num_layers=50,
@@ -167,11 +167,11 @@ def get_attention_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, p=0.3)
+        loss_config=RKDLossConfig(loss="RKD_Dist", alpha=0.5, T=1.5)
     )
 
 
-def get_frozen_attention_distillation_config() -> DistillationConfig:
+def get_frozen_rkdd_distillation_config() -> DistillationConfig:
     return DistillationConfig(
         teacher_config=ModelConfig(model_name="resnet",
                                    num_layers=50,
@@ -184,5 +184,39 @@ def get_frozen_attention_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=AttentionLossConfig(loss="Attention", alpha=0.5, T=1.5, p=0.3)
+        loss_config=RKDLossConfig(loss="RKD_Dist", alpha=0.5, T=1.5)
+    )
+
+
+def get_rkda_distillation_config() -> DistillationConfig:
+    return DistillationConfig(
+        teacher_config=ModelConfig(model_name="resnet",
+                                   num_layers=50,
+                                   pretrained=True,
+                                   is_teacher=True,
+                                   freeze_encoder=False,
+                                   checkpoint_path=join("models", "checkpoints", "teacher_unfrozen.ckpt")),
+        student_config=ModelConfig(model_name="resnet",
+                                   num_layers=18,
+                                   pretrained=True,
+                                   is_teacher=False,
+                                   freeze_encoder=False),
+        loss_config=RKDLossConfig(loss="RKD_Angle", alpha=0.5, T=1.5)
+    )
+
+
+def get_frozen_rkda_distillation_config() -> DistillationConfig:
+    return DistillationConfig(
+        teacher_config=ModelConfig(model_name="resnet",
+                                   num_layers=50,
+                                   pretrained=True,
+                                   is_teacher=True,
+                                   freeze_encoder=True,
+                                   checkpoint_path=join("models", "checkpoints", "teacher.ckpt")),
+        student_config=ModelConfig(model_name="resnet",
+                                   num_layers=18,
+                                   pretrained=True,
+                                   is_teacher=False,
+                                   freeze_encoder=True),
+        loss_config=RKDLossConfig(loss="RKD_Andle", alpha=0.5, T=1.5)
     )
