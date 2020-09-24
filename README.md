@@ -54,9 +54,6 @@
 > учителя. При этом дискриминатор и студент учатся по очереди, я тестировал разные 
 > стартегии, к примеру следующую: 30 шагов учится дискриминатор,
 > а следующие 170 студент. В качетсве `loss` я использовал популярный `Wassershtain loss`
-> К сожалению, эксперименты, которые я поставил не увенчались 
-> успехом, я заметил, что результат на валидации тем лучше, чем меньше шагов учится 
-> дискриминатор. Кроме того такая техника увеличивает время обучения 
 > Реализацию можно найти в классе `LogitsDiscriminatorCifarModel`.
 
 > Наконец, не получив ожидаемого результата с `GAN`, я решил воспроизвести результат
@@ -124,8 +121,8 @@
 | ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ❌        |  94.26   |distillation_kd_unfrozen.ckpt     |
 | ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ✅        |  93.24   |distillation_rkdd.ckpt            |
 | ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ❌        |  94.43   |distillation_rkdd_unfrozen.ckpt   |
-| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |  92.46   |distillation_ld.ckpt              |
-| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |  92.46   |distillation_ld_unfrozen.ckpt     |
+| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |  92.56   |distillation_ld.ckpt              |
+| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ❌        |  93.46   |distillation_ld_unfrozen.ckpt     |
 
 #### Интрперетация
 
