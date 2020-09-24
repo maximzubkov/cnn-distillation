@@ -61,7 +61,7 @@ def get_rkd_default_hyperparams(data_path: str) -> ModelHyperparameters:
         batch_size=32,
         learning_rate=0.001,
         weight_decay=0.0001,
-        decay_gamma=0.7,
+        decay_gamma=0.65,
         shuffle_data=True,
     )
 
@@ -73,7 +73,7 @@ def get_rkd_test_hyperparams(data_path: str) -> ModelHyperparameters:
         batch_size=5,
         learning_rate=0.001,
         weight_decay=0.0001,
-        decay_gamma=0.95,
+        decay_gamma=0.65,
         shuffle_data=True,
     )
 
@@ -131,7 +131,7 @@ def get_kd_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=KDLossConfig(loss="KD", alpha=0.5, T=1.5)
+        loss_config=KDLossConfig(loss="KD", alpha=0.5, temp=1.5)
     )
 
 
@@ -148,7 +148,7 @@ def get_frozen_kd_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=KDLossConfig(loss="KD", alpha=0.5, T=1.5)
+        loss_config=KDLossConfig(loss="KD", alpha=0.5, temp=1.5)
     )
 
 
@@ -165,7 +165,7 @@ def get_rkdd_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=RKDLossConfig(loss="RKD_Dist", lambda_=1)
+        loss_config=RKDLossConfig(loss="RKD_Dist", lambda_=5, temp=1.5)
     )
 
 
@@ -182,7 +182,7 @@ def get_frozen_rkdd_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=RKDLossConfig(loss="RKD_Dist", lambda_=1)
+        loss_config=RKDLossConfig(loss="RKD_Dist", lambda_=5, temp=1.5)
     )
 
 
@@ -199,7 +199,7 @@ def get_rkda_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=RKDLossConfig(loss="RKD_Angle", lambda_=2)
+        loss_config=RKDLossConfig(loss="RKD_Angle", lambda_=2, temp=1.5)
     )
 
 
@@ -216,5 +216,5 @@ def get_frozen_rkda_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=RKDLossConfig(loss="RKD_Andle", lambda_=2)
+        loss_config=RKDLossConfig(loss="RKD_Angle", lambda_=2, temp=1.5)
     )

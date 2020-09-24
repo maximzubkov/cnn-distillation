@@ -12,9 +12,10 @@ class RKDFeatures:
 
 
 class RKDAngleLoss(nn.Module):
-    def __init__(self, lambda_: float):
+    def __init__(self, lambda_: float, temp: float):
         super().__init__()
         self.lambda_ = lambda_
+        self.temp = temp
 
     @staticmethod
     def extract_features(model: nn.Module, batch: torch.Tensor) -> RKDFeatures:
@@ -45,9 +46,10 @@ class RKDAngleLoss(nn.Module):
 
 
 class RKDDistanceLoss(nn.Module):
-    def __init__(self, lambda_: float):
+    def __init__(self, lambda_: float, temp: float):
         super().__init__()
         self.lambda_ = lambda_
+        self.temp = temp
 
     @staticmethod
     def extract_features(model: nn.Module, batch: torch.Tensor) -> RKDFeatures:

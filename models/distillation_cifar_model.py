@@ -15,11 +15,13 @@ class DistillationCifarModel(BaseCifarModel):
         self.loss_config = model_config.loss_config
         if self.loss_config.loss == "KD":
             self.criterion = KDLoss(alpha=self.loss_config.alpha,
-                                    temp=self.loss_config.T)
+                                    temp=self.loss_config.temp)
         elif self.loss_config.loss == "RKD_Dist":
-            self.criterion = RKDDistanceLoss(lambda_=self.loss_config.lambda_)
+            self.criterion = RKDDistanceLoss(lambda_=self.loss_config.lambda_,
+                                             temp=self.loss_config.temp)
         elif self.loss_config.loss == "RKD_Angle":
-            self.criterion = RKDAngleLoss(lambda_=self.loss_config.lambda_)
+            self.criterion = RKDAngleLoss(lambda_=self.loss_config.lambda_,
+                                          temp=self.loss_config.temp)
         else:
             raise ValueError(f"Unknown loss function {self.loss_config.loss}")
         self.student = self.get_model(model_config.student_config)
