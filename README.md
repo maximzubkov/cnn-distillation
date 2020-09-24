@@ -121,7 +121,6 @@
 | ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ✅        |  93.24   |distillation_rkdd.ckpt            |
 | ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ❌        |  94.43   |distillation_rkdd_unfrozen.ckpt   |
 | ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |  92.46   |logits_discriminator.ckpt         |
-| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ❌        |          |logits_discriminator_unfrozen.ckpt|
 
 #### Интрперетация
 
