@@ -63,7 +63,6 @@ def get_rkd_default_hyperparams(data_path: str) -> ModelHyperparameters:
         weight_decay=0.0001,
         decay_gamma=0.7,
         shuffle_data=True,
-        grad_clip=0.5
     )
 
 
@@ -76,7 +75,6 @@ def get_rkd_test_hyperparams(data_path: str) -> ModelHyperparameters:
         weight_decay=0.0001,
         decay_gamma=0.95,
         shuffle_data=True,
-        grad_clip=0.5
     )
 
 
