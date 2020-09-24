@@ -9,6 +9,9 @@ from .loss import KDLoss, RKDDistanceLoss, RKDAngleLoss
 
 
 class DistillationCifarModel(BaseCifarModel):
+    '''
+    Model for distillation
+    '''
     def __init__(self, model_config: DistillationConfig,
                  hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__(hyperparams_config, num_workers)

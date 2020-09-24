@@ -14,6 +14,9 @@ from .resnet import ResNet18, ResNet50
 
 
 class BaseCifarModel(LightningModule):
+    '''
+    Base model for learning on cifar dataset
+    '''
     def __init__(self, hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__()
         self.hyperparams = hyperparams_config

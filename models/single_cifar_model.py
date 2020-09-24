@@ -9,6 +9,9 @@ from .base_cifar_model import BaseCifarModel
 
 
 class SingleCifarModel(BaseCifarModel):
+    '''
+    Model for learning a single model on cifar
+    '''
     def __init__(self, model_config: ModelConfig,
                  hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__(hyperparams_config, num_workers)

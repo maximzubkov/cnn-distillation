@@ -10,11 +10,15 @@ from .base_cifar_model import BaseCifarModel
 
 
 class LogitsDiscriminatorCifarModel(BaseCifarModel):
+    '''
+    Model for distillation using logits discriminator
+    '''
     def __init__(self, model_config: DistillationConfig,
                  hyperparams_config: ModelHyperparameters, num_workers: int = 0):
         super().__init__(hyperparams_config, num_workers)
         self.temp = model_config.loss_config.T
         self.alpha = model_config.loss_config.alpha
+        # this function determines discriminator or student should be trained
         self.is_student_training_func = model_config.loss_config.is_student_training_func
         self.student = self.get_model(model_config.student_config)
         self.teacher = self.get_model(model_config.teacher_config)
