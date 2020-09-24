@@ -25,7 +25,7 @@ def configure_experiment(experiment: str, num_workers: int = 0,
                          is_test: bool = False, is_unfrozen: bool = False):
     if experiment == "kd_distillation":
         hyperparams_config_function = get_kd_test_hyperparams if is_test else get_kd_default_hyperparams
-    elif experiment == "rkd_distillation":
+    elif experiment in ["rkdd_distillation", "rkda_distillation"]:
         hyperparams_config_function = get_rkd_test_hyperparams if is_test else get_rkd_default_hyperparams
     else:
         hyperparams_config_function = get_test_hyperparams if is_test else get_default_hyperparams
