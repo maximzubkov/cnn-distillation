@@ -26,3 +26,7 @@ python eval.py models/checkpoints/distillation_rkdd.ckpt distillation
 
 echo "Evaluating pretrained student distillation by teacher with RKD Distance Loss, all student layers unfrozen"
 python eval.py models/checkpoints/distillation_rkdd_unfrozen.ckpt distillation
+
+echo "Evaluating pretrained student distillation by teacher with Logits Discriminator,"
+echo "all student layers frozen except BN and classifier"
+python eval.py models/checkpoints/distillation_rkdd_unfrozen.ckpt distillation

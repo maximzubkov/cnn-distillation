@@ -111,7 +111,7 @@
 
 | Student  | Teacher  | Method                | Pretrained | Freeze Encoder | Accuracy | `.ckpt` file                     |
 |----------|----------|-----------------------|------------|----------------|----------|----------------------------------|
-| ResNet18 | ❌        | Cross Entropy        |     ✅      |       ✅       |  93.07   |student.ckpt                      |
+| ResNet18 | ❌        | Cross Entropy        |     ✅      |       ✅       |  93.05   |student.ckpt                      |
 | ResNet18 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.65   |student_unfrozen.ckpt             | 
 | ResNet50 | ❌        | Cross Entropy        |     ✅      |       ✅       |  95.71   |teacher.ckpt                      |
 | ResNet50 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.83   |teacher_unfrozen.ckpt             |
@@ -122,4 +122,18 @@
 | ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |  92.46   |logits_discriminator.ckpt         |
 | ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ❌        |          |logits_discriminator_unfrozen.ckpt|
 
-#### 
+#### Интрперетация
+
+Теперь сравним результаты работы `grad-cam`. Резкльтаты представлены в следующем 
+порядке:
+* Исходное изображение
+* Студент `Resnet18` с учителем `Resnet50`
+* Учитель `Resnet50`
+* Студент `Resnet18` без учителя
+
+* Все слои кроме `BatchNorm` и классификатора заморожены
+
+![](imgs/wagon.png)
+* Все слои разморожены
+
+![](imgs/wagon_unf.png)
