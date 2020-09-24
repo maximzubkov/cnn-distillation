@@ -14,5 +14,4 @@ class KDLossConfig(LossConfig):
 
 @dataclass(frozen=True)
 class RKDLossConfig(LossConfig):
-    alpha: float
-    T: float
+    lambda_: float

@@ -12,10 +12,9 @@ class RKDFeatures:
 
 
 class RKDAngleLoss(nn.Module):
-    def __init__(self, alpha: float, temp: float):
+    def __init__(self, lambda_: float):
         super().__init__()
-        self.alpha = alpha
-        self.temp = temp
+        self.lambda_ = lambda_
 
     @staticmethod
     def extract_features(model: nn.Module, batch: torch.Tensor) -> RKDFeatures:
@@ -39,15 +38,14 @@ class RKDAngleLoss(nn.Module):
 
         rkd = F.smooth_l1_loss(s_angle, t_angle, reduction='elementwise_mean')
         cross_entropy = F.cross_entropy(student_logits, labels)
-        loss = rkd * (self.alpha * self.temp * self.temp) + cross_entropy * (1. - self.alpha)
+        loss = rkd * self.lambda_ + cross_entropy
         return loss
 
 
 class RKDDistanceLoss(nn.Module):
-    def __init__(self, alpha: float, temp: float):
+    def __init__(self, lambda_: float):
         super().__init__()
-        self.alpha = alpha
-        self.temp = temp
+        self.lambda_ = lambda_
 
     @staticmethod
     def extract_features(model: nn.Module, batch: torch.Tensor) -> RKDFeatures:
@@ -71,5 +69,5 @@ class RKDDistanceLoss(nn.Module):
 
         rkd = F.smooth_l1_loss(d, t_d, reduction='elementwise_mean')
         cross_entropy = F.cross_entropy(student_logits, labels)
-        loss = rkd * (self.alpha * self.temp * self.temp) + cross_entropy * (1. - self.alpha)
+        loss = rkd * self.lambda_ + cross_entropy
         return loss
