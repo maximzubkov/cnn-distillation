@@ -19,7 +19,7 @@ class LogitsDiscriminatorCifarModel(BaseCifarModel):
         self.temp = model_config.loss_config.T
         self.alpha = model_config.loss_config.alpha
         # this function determines discriminator or student should be trained
-        self.is_student_training_func = model_config.loss_config.is_student_training_func
+        self.is_student_training_func = lambda idx: (idx % 200) > 20
         self.student = self.get_model(model_config.student_config)
         self.teacher = self.get_model(model_config.teacher_config)
         self.discriminator = TinyConvDiscriminator()

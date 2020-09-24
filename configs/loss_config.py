@@ -23,4 +23,3 @@ class RKDLossConfig(LossConfig):
 class LDLossConfig(LossConfig):
     alpha: float
     T: float
-    is_student_training_func: Callable

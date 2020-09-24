@@ -199,8 +199,7 @@ def get_ld_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=False),
-        loss_config=LDLossConfig(loss="Wasserstein", alpha=0.5, T=1.5,
-                                 is_student_training_func=lambda idx: (idx % 200) < 20)
+        loss_config=LDLossConfig(loss="Wasserstein", alpha=0.5, T=1.5)
     )
 
 
@@ -217,6 +216,5 @@ def get_frozen_ld_distillation_config() -> DistillationConfig:
                                    pretrained=True,
                                    is_teacher=False,
                                    freeze_encoder=True),
-        loss_config=LDLossConfig(loss="Wasserstein", alpha=0.5, T=1.5,
-                                 is_student_training_func=lambda idx: (idx % 200) > 20)
+        loss_config=LDLossConfig(loss="Wasserstein", alpha=0.5, T=1.5)
     )
