@@ -112,6 +112,8 @@
 -------
 #### Результаты 
 
+Здесь представлена выжимка результатов, более подробный обзор доступен по [ссылке](https://wandb.ai/maximzubkov/distillation-freezed-KD/reports/Validation-Report--VmlldzoyNTQzMDg?accessToken=4ge4d4rzrofag42riufy0xkkwr8e7l1pqn3285buckb0rw3z6nqk1493861f0cuu)
+
 | Student  | Teacher  | Method                | Pretrained | Freeze Encoder | Accuracy | `.ckpt` file                     |
 |----------|----------|-----------------------|------------|----------------|----------|----------------------------------|
 | ResNet18 | ❌        | Cross Entropy        |     ✅      |       ✅       |  93.05   |student.ckpt                      |
