@@ -27,9 +27,9 @@ echo "Train pretrained student distillated by teacher using RKD Distance loss"
 echo "all student layers unfrozen"
 python train.py rkdd_distillation --unfrozen
 
-echo "Train pretrained student distillated by teacher using RKD Angle loss"
+echo "Train pretrained student distillated by teacher using Logits Discriminator"
 echo "all student layers frozen except BN and classifier"
-python train.py rkda_distillation
-echo "Train pretrained student distillated by teacher using RKD Angle loss"
+python train.py ld_distillation
+echo "Train pretrained student distillated by teacher using Logits Discriminator"
 echo "all student layers unfrozen"
-python train.py rkda_distillation --unfrozen
+python train.py ld_distillation --unfrozen

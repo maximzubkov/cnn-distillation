@@ -106,16 +106,16 @@
 -------
 #### Результаты 
 
-| Student  | Teacher  | Method                | Pretrained | Freeze Encoder | Accuracy | `.ckpt` file                |
-|----------|----------|-----------------------|------------|----------------|----------|-----------------------------|
-| ResNet18 | ❌        | Cross Entropy        |     ✅      |       ✅       |  93.07   |student.ckpt                 |
-| ResNet18 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.65   |student_unfrozen.ckpt        | 
-| ResNet50 | ❌        | Cross Entropy        |     ✅      |       ✅       |  95.71   |teacher.ckpt                 |
-| ResNet50 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.83   |teacher_unfrozen.ckpt        |
-| ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ✅        |  93.29   |distillation_kd.ckpt         |
-| ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ❌        |  94.26   |distillation_kd_unfrozen.ckpt|
-| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ✅        |  93.24   |    |
-| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ❌        |  94.43   |    |
+| Student  | Teacher  | Method                | Pretrained | Freeze Encoder | Accuracy | `.ckpt` file                  |
+|----------|----------|-----------------------|------------|----------------|----------|-------------------------------|
+| ResNet18 | ❌        | Cross Entropy        |     ✅      |       ✅       |  93.07   |student.ckpt                   |
+| ResNet18 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.65   |student_unfrozen.ckpt          | 
+| ResNet50 | ❌        | Cross Entropy        |     ✅      |       ✅       |  95.71   |teacher.ckpt                   |
+| ResNet50 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.83   |teacher_unfrozen.ckpt          |
+| ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ✅        |  93.29   |distillation_kd.ckpt           |
+| ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ❌        |  94.26   |distillation_kd_unfrozen.ckpt  |
+| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ✅        |  93.24   |distillation_rkdd.ckpt         |
+| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ❌        |  94.43   |distillation_rkdd_unfrozen.ckpt|
 | ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |     |    |
 | ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ❌        |     |    |
 
