@@ -39,7 +39,7 @@
 > * Разморозить `BatchNormalization`. Данное улучшение также кажется логичным, так как свертки обучены на `ImageNet`
 > достаточно хороши, а вот масштабы и локализация объектов в `cifar10` может немного отличать от `ImageNet`
 
-> Далее я реализовал `DistillationCifarModel` и лосс функцию из следующей 
+> Далее я реализовал `DistillationCifarModel` и `loss` функцию из следующей 
 > [статьи](http://cs230.stanford.edu/files_winter_2018/projects/6940224.pdf), 
 > результаты получились хорошими не сразу достаточно много времени пришлось 
 > потратить на подбор гиперпарамтеров
@@ -62,20 +62,61 @@
 > использовании `Knowledge Distillation`. Для этого я воспользовался подходом 
 > [grad-cam](https://arxiv.org/abs/1610.02391) реализованный в библиотеке `gradcam`
 
--------
-#### Резкльтаты 
+#### Запуск экспрементов
 
-|          | Teacher  | Method                | Pretrained | Freeze Encoder | Accuracy |
-|----------|----------|-----------------------|------------|----------------|----------|
-| ResNet18 | ❌        | Cross Entropy        |     ✅     |       ✅       |  93.07   |
-| ResNet18 | ❌        | Cross Entropy        |     ✅     |       ❌       |  93.65   |
-| ResNet50 | ❌        | Cross Entropy        |     ✅     |       ✅       |  95.71   |
-| ResNet50 | ❌        | Cross Entropy        |     ✅     |       ❌       |  93.83   |
-| ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ✅       |  93.29   |
-| ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ❌       |  94.26   |
-| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ✅       |  93.24   |
-| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ❌       |  94.42   |
-| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅       |     |
-| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ❌       |     |
+> Перед запуском эксперементов необходимо установить все неоходимые библиотеки, 
+это можно сделать при помощи команды
+> ```bash
+> sh scripts/build.sh
+> ```
+
+> Все эксперемнты можно запустить используя команду 
+> ```bash
+> sh scripts/train.sh
+> ```
+> Если необходимо запустить обучения какого-то конкретного экспреемента необходимо 
+> выполнить команду
+> ```bash
+> python train.py <experiment name> 
+> ```
+> Таже можно добавить флаг `--unfrozen` чтобы обучить модель со всеми слоями размороженными 
+> Названия эксперемнтов следующие:
+> * Обучение студента без учителя: `student`
+> * Обучение учителя: `teacher`
+> * Обучение студента c учителем с использованием KD Loss 
+> из [статьи](http://cs230.stanford.edu/files_winter_2018/projects/6940224.pdf): `kd_distillation`
+> * Обучение студента c учителем с использованием RKD Distance Loss 
+> из [статьи](https://arxiv.org/pdf/1904.05068.pdf): `rkdd_distillation`
+> * Обучение студента c учителем с использованием Logits Discriminator Loss 
+> из [статьи](https://arxiv.org/pdf/1904.05068.pdf): `ld_distillation`
+
+> Обученные модели сохранены в папке `models/checkpoints`. Чтобы получить оценки 
+> качества всех моделей необходимо выполнить команду 
+> ```bash
+> sh scripts/eval.sh
+> ```
+> Если необходимо метрики какого-то конкретного экспреемента необходимо 
+> выполнить команду
+>```bash
+> python eval.py <path to .ckpt file> <experiment name>
+> ```
+> В данном случае видов эксперементов всего три: [`teacher`,`student`,`distillation`],
+> а соответсвующие эксперементам `.ckpt` названия файлов представлены в таблице с результатами 
+
+-------
+#### Результаты 
+
+| Student  | Teacher  | Method                | Pretrained | Freeze Encoder | Accuracy | `.ckpt` file                |
+|----------|----------|-----------------------|------------|----------------|----------|-----------------------------|
+| ResNet18 | ❌        | Cross Entropy        |     ✅      |       ✅       |  93.07   |student.ckpt                 |
+| ResNet18 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.65   |student_unfrozen.ckpt        | 
+| ResNet50 | ❌        | Cross Entropy        |     ✅      |       ✅       |  95.71   |teacher.ckpt                 |
+| ResNet50 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.83   |teacher_unfrozen.ckpt        |
+| ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ✅        |  93.29   |distillation_kd.ckpt         |
+| ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ❌        |  94.26   |distillation_kd_unfrozen.ckpt|
+| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ✅        |  93.24   |    |
+| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ❌        |  94.43   |    |
+| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |     |    |
+| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ❌        |     |    |
 
 #### 
