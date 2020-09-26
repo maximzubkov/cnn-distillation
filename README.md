@@ -104,7 +104,7 @@
 >```bash
 > python eval.py <path to .ckpt file> <experiment name>
 > ```
-> В данном случае видов экспериментов всего три: [`teacher`,`student`,`distillation`],
+> В данном случае видов экспериментов всего три: [`teacher`,`student`,`distillation`, `discriminator`],
 > а соответствующие экспериментам `.ckpt` названия файлов представлены в таблице с результатами 
 
 -------

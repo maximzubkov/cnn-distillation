@@ -29,8 +29,8 @@ python eval.py models/checkpoints/distillation_rkdd_unfrozen.ckpt distillation
 
 echo "Evaluating pretrained student distillation by teacher with Logits Discriminator,"
 echo "all student layers frozen except BN and classifier"
-python eval.py models/checkpoints/distillation_ld.ckpt distillation
+python eval.py models/checkpoints/distillation_ld.ckpt discriminator
 
 echo "Evaluating pretrained student distillation by teacher with Logits Discriminator,"
 echo "all student layers frozen except BN and classifier"
-python eval.py models/checkpoints/distillation_ld_unfrozen.ckpt distillation
+python eval.py models/checkpoints/distillation_ld_unfrozen.ckpt discriminator
