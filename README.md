@@ -120,9 +120,9 @@
 | ResNet50 | ❌        | Cross Entropy        |     ✅      |       ❌       |  93.83   |teacher_unfrozen.ckpt             |
 | ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ✅        |  93.29   |distillation_kd.ckpt              |
 | ResNet18 | ResNet50  | Default KD loss      |     ✅     |       ❌        |  94.26   |distillation_kd_unfrozen.ckpt     |
-| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ✅        |  93.24   |distillation_rkdd.ckpt            |
+| ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ✅        |  93.05   |distillation_rkdd.ckpt            |
 | ResNet18 | ResNet50  | RKD Distance loss    |     ✅     |       ❌        |  94.43   |distillation_rkdd_unfrozen.ckpt   |
-| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |  92.56   |distillation_ld.ckpt              |
+| ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ✅        |  92.21   |distillation_ld.ckpt              |
 | ResNet18 | ResNet50  | Logits Discriminator |     ✅     |       ❌        |  93.46   |distillation_ld_unfrozen.ckpt     |
 
 #### Интерпретация
